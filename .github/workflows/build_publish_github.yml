@@ -191,3 +191,11 @@ jobs:
         GH_TOKEN: ${{ github.token }}
       run: |
         ./publish_release.sh "${{ env.IMAGE }}"
+
+    - name: Delete old packages
+      uses: actions/delete-package-versions@v5
+      with:
+        owner: hcholab
+        package_name: sfkit
+        package-type: container
+        num-old-versions-to-delete: 100
