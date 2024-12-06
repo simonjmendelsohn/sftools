@@ -49,7 +49,7 @@ jobs:
           poetry run pytest
 
       - name: Test publish with poetry
-        if: false # github.ref != 'refs/heads/main'
+        if: false # github.ref != 'refs/heads/prod'
         run: |
           poetry version $(curl -s https://test.pypi.org/pypi/sfkit/json | jq -r '.info.version')
           poetry version patch
@@ -60,7 +60,7 @@ jobs:
           poetry publish --build -r test-pypi
 
       - name: Publish with poetry
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/prod'
         run: |
           poetry version $(curl -s https://pypi.org/pypi/sfkit/json | jq -r '.info.version')
           poetry version patch

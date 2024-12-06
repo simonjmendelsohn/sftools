@@ -51,8 +51,8 @@ jobs:
           ${{ steps.set-outputs.outputs.image }}
         tags: |
           # set latest tag for main branch
-          type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-          type=ref,event=branch,enable=${{ github.ref != 'refs/heads/main' }}
+          type=raw,value=latest,enable=${{ github.ref == 'refs/heads/prod' }}
+          type=ref,event=branch,enable=${{ github.ref != 'refs/heads/prod' }}
           type=ref,event=pr
           type=semver,pattern={{version}}
 
@@ -193,10 +193,10 @@ jobs:
 
     - name: Download Crane tool
       uses: imjasonh/setup-crane@v0.4
-      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/prod'
 
     - name: Publish release archives to GitHub
-      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/prod'
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
