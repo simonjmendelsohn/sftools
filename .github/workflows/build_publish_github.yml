@@ -196,6 +196,6 @@ jobs:
       uses: actions/delete-package-versions@v5
       with:
         owner: hcholab
-        package_name: sfkit
+        package-name: sfkit
         package-type: container
         num-old-versions-to-delete: 100
