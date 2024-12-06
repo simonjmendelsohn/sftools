@@ -4,17 +4,7 @@ name: Build and Publish to GitHub
 
 on:
   push:
-    branches: [main]
-    paths:
-    - '*.sh'
-    - "poetry.*"
-    - 'py*'
-    - 'sfkit/**'
-    - 'tests/**'
-    - 'Dockerfile'
-    - '.github/workflows/build_publish_github.yml'
-  pull_request:
-    branches: [main]
+    branches: [dev, prod]
     paths:
     - '*.sh'
     - "poetry.*"

@@ -5,15 +5,7 @@ name: Build and Publish to PyPI
 
 on:
   push:
-    branches: [main]
-    paths:
-    - "poetry.*"
-    - 'py*'
-    - 'sfkit/**'
-    - 'tests/**'
-    - '.github/workflows/build_publish_pypi.yml'
-  pull_request:
-    branches: [main]
+    branches: [dev, prod]
     paths:
     - "poetry.*"
     - 'py*'
