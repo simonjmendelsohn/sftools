@@ -3,11 +3,11 @@ from typing import Optional, Tuple
 
 import checksumdir
 
-from sfkit.api import get_doc_ref_dict, update_firestore
+from sfkit.api import (get_doc_ref_dict, get_username, update_firestore,
+                       website_send_file)
 from sfkit.encryption.mpc.encrypt_data import encrypt_data
 from sfkit.utils import constants
 from sfkit.utils.helper_functions import authenticate_user, condition_or_fail
-from sfkit.api import get_username, website_send_file
 
 
 def register_data(geno_binary_file_prefix: str = "", data_path: str = "") -> bool:
@@ -42,6 +42,8 @@ def register_data(geno_binary_file_prefix: str = "", data_path: str = "") -> boo
             data_path = validate_pca(doc_ref_dict, username, data_path)
         elif study_type == "SF-RELATE":
             data_path = validate_sfrelate(doc_ref_dict, username, data_path, role)
+        elif study_type == "Secure-DTI":
+            data_path = validate_dti(doc_ref_dict, username, data_path, role)
         else:
             raise ValueError(f"Unknown study type: {study_type}")
 
@@ -175,6 +177,29 @@ def validate_sfrelate(doc_ref_dict: dict, username: str, data_path: str, role: s
     data_path = validate_data_path(data_path)
 
     # TODO: validate the data for SF-RELATE
+    return data_path
+
+
+def validate_dti(doc_ref_dict: dict, username: str, data_path: str, role: str) -> str:
+    data_path = validate_data_path(data_path)
+
+    if data_path == "demo" or (constants.IS_DOCKER and doc_ref_dict["demo"]):
+        using_demo()
+
+    feature_rank_value = doc_ref_dict["personal_parameters"][username]["FEATURE_RANK"]["value"]
+
+    if feature_rank_value == "":
+        condition_or_fail(False, "FEATURE_RANK is not set. Please set it and try again.")
+
+    # feature_rank = validate_dti_data(data_path)
+    # condition_or_fail(
+    #     feature_rank == int(feature_rank_value),
+    #     "FEATURE_RANK does not match the data.",
+    # )
+
+    # if role == "1":
+    #     website_send_file(open(os.path.join(data_path, "pos.txt"), "r"), "pos.txt")
+
     return data_path
 
 

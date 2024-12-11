@@ -1,11 +1,12 @@
 import time
 
-from sfkit.api import get_doc_ref_dict, update_firestore
+from sfkit.api import (create_cp0, get_doc_ref_dict, get_username,
+                       update_firestore)
+from sfkit.utils.dti_protocol import run_dti_protocol
 from sfkit.utils.gwas_protocol import run_gwas_protocol
+from sfkit.utils.helper_functions import authenticate_user
 from sfkit.utils.pca_protocol import run_pca_protocol
 from sfkit.utils.sfgwas_protocol import run_sfgwas_protocol
-from sfkit.api import create_cp0, get_username
-from sfkit.utils.helper_functions import authenticate_user
 from sfkit.utils.sfrelate_protocol import run_sfrelate_protocol
 
 
@@ -69,6 +70,8 @@ def run_protocol(
             run_pca_protocol(role, demo)
         elif study_type == "SF-RELATE":
             run_sfrelate_protocol(role, demo)
+        elif study_type == "Secure-DTI":
+            run_dti_protocol(role, demo)
         else:
             raise ValueError(f"Unknown study type: {study_type}")
     else:
