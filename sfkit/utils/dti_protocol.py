@@ -19,7 +19,7 @@ def run_dti_protocol(role: str, demo: bool = False) -> None:
     if not demo:
         update_parameters(role)
         ## connect_to_other_vms(role)
-        # prepare_data(constants.ENCRYPTED_DATA_FOLDER, role)
+        prepare_data(constants.ENCRYPTED_DATA_FOLDER, role)
         # copy_data_to_gwas_repo(constants.ENCRYPTED_DATA_FOLDER, role)
         # sync_with_other_vms(role)
     # start_datasharing(role, demo)
@@ -70,13 +70,13 @@ def update_parameters(role: str) -> None:
         print(line, end="")
 
 
-# def prepare_data(data_path: str, role: str) -> None:
-#     doc_ref_dict: dict = get_doc_ref_dict()
-#     study_title: str = doc_ref_dict["title"]
+def prepare_data(data_path: str, role: str) -> None:
+    doc_ref_dict: dict = get_doc_ref_dict()
+    study_title: str = doc_ref_dict["title"]
 
-#     if role == "0":
-#         os.makedirs(data_path, exist_ok=True)
-#         storage.Client().bucket("sfkit").blob(f"{study_title}/pos.txt").download_to_filename(f"{data_path}/pos.txt")
+    if role == "0":
+        os.makedirs(data_path, exist_ok=True)
+        storage.Client().bucket("sfkit").blob(f"{study_title}/pos.txt").download_to_filename(f"{data_path}/pos.txt")
 
 
 # def copy_data_to_gwas_repo(
