@@ -184,6 +184,7 @@ COPY --from=sfkit /build/dist/sfkit*.whl    ./
 
 RUN microdnf install -y \
         findutils \
+        proxychains-ng \
         python3 \
         python3-pip \
     && \
