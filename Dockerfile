@@ -28,7 +28,7 @@ WORKDIR /build
 FROM go AS sfgwas
 
 RUN git clone --depth 1 https://github.com/hcholab/sfgwas . && \
-    git checkout db52ea4 && \
+    git checkout f604681 && \
     go build && \
     mkdir cache && \
     rm -rf .git
@@ -129,7 +129,7 @@ RUN sed -i "s|^CPP.*$|CPP = /usr/bin/clang++|g" Makefile && \
 FROM cpp AS secure-gwas
 
 RUN git clone --depth 1 https://github.com/hcholab/secure-gwas . && \
-    git checkout f604681 && \
+    git checkout d4c6dbc && \
     rm -rf .git
 
 WORKDIR /build/code
