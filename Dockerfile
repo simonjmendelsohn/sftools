@@ -51,7 +51,7 @@ FROM go AS sfkit-proxy
 SHELL ["/bin/bash", "-eo", "pipefail", "-c"]
 
 RUN git clone https://github.com/hcholab/sfkit-proxy . && \
-    git checkout fea99f1 && \
+    git checkout f8e25f2 && \
     go build && \
     # ensure FIPS is enabled, fail if not
     go get github.com/acardace/fips-detect && \
@@ -129,7 +129,7 @@ RUN sed -i "s|^CPP.*$|CPP = /usr/bin/clang++|g" Makefile && \
 FROM cpp AS secure-gwas
 
 RUN git clone --depth 1 https://github.com/hcholab/secure-gwas . && \
-    git checkout d4c6dbc && \
+    git checkout f604681 && \
     rm -rf .git
 
 WORKDIR /build/code
