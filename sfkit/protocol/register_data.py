@@ -186,7 +186,7 @@ def validate_dti(doc_ref_dict: dict, username: str, data_path: str, role: str) -
     if data_path == "demo" or (constants.IS_DOCKER and doc_ref_dict["demo"]):
         using_demo()
 
-    feature_rank_value = doc_ref_dict["personal_parameters"][username]["FEATURE_RANK"]["value"]
+    feature_rank_value = doc_ref_dict["parameters"]["FEATURE_RANK"]["value"]
 
     if feature_rank_value == "":
         condition_or_fail(False, "FEATURE_RANK is not set. Please set it and try again.")
