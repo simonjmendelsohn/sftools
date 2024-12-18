@@ -27,7 +27,8 @@ def run_dti_protocol(role: str, demo: bool = False) -> None:
 
 
 def update_parameters(role: str) -> None:
-    print(f"\n\n Updating parameters in 'secure-gwas/par/test.par.{role}.txt'\n\n")
+    par_file = f"{constants.EXECUTABLES_PREFIX}secure-dti/mpc/par/test.par.{role}.txt"
+    print(f"\n\n Updating parameters in '{par_file}'\n\n")
 
     doc_ref_dict = get_doc_ref_dict()
 
@@ -76,7 +77,7 @@ def update_parameters(role: str) -> None:
     pars["TRAIN_SUFFIXES"] = f"{data_path}/train_suffixes.txt"
     pars["TEST_SUFFIXES"] = f"{data_path}/test_suffixes.txt"
 
-    for line in fileinput.input(f"{constants.EXECUTABLES_PREFIX}secure-dti/mpc/par/test.par.{role}.txt", inplace=True):
+    for line in fileinput.input(par_file, inplace=True):
         key = str(line).split(" ")[0]
         if key in pars:
             line = f"{key} " + str(pars[key]["value"]) + "\n"
