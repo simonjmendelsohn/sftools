@@ -72,10 +72,10 @@ def update_parameters(role: str) -> None:
     if not data_path:
         return
 
-    pars["FEATURES_FILE"] = f"{data_path}/X"
-    pars["LABELS_FILE"] = f"{data_path}/y"
-    pars["TRAIN_SUFFIXES"] = f"{data_path}/train_suffixes.txt"
-    pars["TEST_SUFFIXES"] = f"{data_path}/test_suffixes.txt"
+    pars["FEATURES_FILE"] = {"value": f"{data_path}/X"}
+    pars["LABELS_FILE"] = {"value": f"{data_path}/y"}
+    pars["TRAIN_SUFFIXES"] = {"value": f"{data_path}/train_suffixes.txt"}
+    pars["TEST_SUFFIXES"] = {"value": f"{data_path}/test_suffixes.txt"}
 
     for line in fileinput.input(par_file, inplace=True):
         key = str(line).split(" ")[0]
