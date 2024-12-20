@@ -12,6 +12,7 @@ from sfkit.utils import constants
 from sfkit.utils.helper_functions import (copy_results_to_cloud_storage,
                                           copy_to_out_folder, plot_assoc,
                                           postprocess_assoc, run_command)
+from sfkit.utils.sfgwas_helper_functions import boot_sfkit_proxy
 
 
 def run_dti_protocol(role: str, demo: bool = False) -> None:
@@ -132,7 +133,10 @@ def start_datasharing(role: str, demo: bool) -> None:
     cwd = os.getcwd()
     os.chdir(f"{constants.EXECUTABLES_PREFIX}secure-dti/mpc/code")
 
-    command = ["proxychains"] if constants.SFKIT_PROXY_ON else []
+    command = []
+    if constants.SFKIT_PROXY_ON:
+        boot_sfkit_proxy(role=role)
+        command.append("proxychains")
     command += ["bin/ShareData", role, f"../par/{'demo' if demo else 'test'}.par.{role}.txt"]
     if role == "3":
         command.append(_get_data_path(role))
