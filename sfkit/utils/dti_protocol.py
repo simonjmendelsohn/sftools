@@ -136,6 +136,12 @@ def start_datasharing(role: str, demo: bool) -> None:
     if constants.SFKIT_PROXY_ON:
         boot_sfkit_proxy(role=role)
         command.append("proxychains")
+        copy2("/etc/proxychains.conf", "proxychains.conf")
+        for line in fileinput.input("proxychains.conf", inplace=True):
+            if line.startswith("socks4"):
+                line = f"socks5 127.0.0.1 {constants.SFKIT_PROXY_PORT}\n"
+            print(line, end="")
+
     command += ["bin/ShareData", role, f"../par/{'demo' if demo else 'test'}.par.{role}.txt"]
     if role == "3":
         command.append(_get_data_path(role))
