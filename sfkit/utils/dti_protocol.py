@@ -131,7 +131,9 @@ def start_datasharing(role: str, demo: bool) -> None:
 
     cwd = os.getcwd()
     os.chdir(f"{constants.EXECUTABLES_PREFIX}secure-dti/mpc/code")
-    command = ["bin/ShareData", role, f"../par/{'demo' if demo else 'test'}.par.{role}.txt"]
+
+    command = ["proxychains"] if constants.SFKIT_PROXY_ON else []
+    command += ["bin/ShareData", role, f"../par/{'demo' if demo else 'test'}.par.{role}.txt"]
     if role == "3":
         command.append(_get_data_path(role))
     run_command(command, fail_message="Failed Secure-DTI data sharing protocol")
