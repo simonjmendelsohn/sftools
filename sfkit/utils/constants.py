@@ -41,7 +41,6 @@ SAFE_DATA_PATH = os.environ.get("SAFE_DATA_PATH", "/data")
 SAFE_DATA_PATH = os.path.join(os.path.realpath(SAFE_DATA_PATH), "")
 
 ENV = os.environ.copy()
-SFKIT_PROXY_PORT = os.environ.get("SFKIT_PROXY_PORT", "7080")
 if SFKIT_PROXY_ON:
-    ENV["ALL_PROXY"] = "socks5://localhost:" + SFKIT_PROXY_PORT
-    ENV["PROXYCHAINS_SOCKS5_PORT"] = SFKIT_PROXY_PORT
+    ENV["ALL_PROXY"] = "socks5://localhost:" + os.environ.get("SFKIT_PROXY_PORT", "7080")
+    ENV["PROXYCHAINS_CONF_FILE"] = f"{EXECUTABLES_PREFIX}proxychains.conf"

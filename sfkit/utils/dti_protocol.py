@@ -136,8 +136,9 @@ def start_datasharing(role: str, demo: bool) -> None:
     if constants.SFKIT_PROXY_ON:
         boot_sfkit_proxy(role=role)
         command.append("proxychains")
-        copy2("/etc/proxychains.conf", "proxychains.conf")
-        for line in fileinput.input("proxychains.conf", inplace=True):
+        proxychains_conf = constants.ENV["PROXYCHAINS_CONF_FILE"]
+        copy2("/etc/proxychains.conf", proxychains_conf)
+        for line in fileinput.input(proxychains_conf, inplace=True):
             if line.startswith("socks"):
                 line = f"socks5 127.0.0.1 {constants.SFKIT_PROXY_PORT}\n"
             print(line, end="")
