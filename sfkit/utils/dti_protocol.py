@@ -132,22 +132,24 @@ def start_datasharing(role: str, demo: bool) -> None:
     update_firestore("update_firestore::task=Performing data sharing protocol")
     print("\n\n starting data sharing protocol \n\n")
 
+    cwd = os.getcwd()
     command = []
     if constants.SFKIT_PROXY_ON:
         boot_sfkit_proxy(role=role)
-        command.append("proxychains")
-        proxychains_conf = constants.ENV["PROXYCHAINS_CONF_FILE"]
+
+        proxychains_conf = os.path.join(cwd, "proxychains.conf")
         copy2("/etc/proxychains.conf", proxychains_conf)
         for line in fileinput.input(proxychains_conf, inplace=True):
             if line.startswith("socks"):
                 line = f"socks5 127.0.0.1 {constants.SFKIT_PROXY_PORT}\n"
             print(line, end="")
+        command += ["proxychains", "-f", proxychains_conf]
 
     command += ["bin/ShareData", role, f"../par/{'demo' if demo else 'test'}.par.{role}.txt"]
     if role == "3":
         command.append(_get_data_path(role))
 
-    cwd = os.getcwd()
+
     os.chdir(f"{constants.EXECUTABLES_PREFIX}secure-dti/mpc/code")
     run_command(command, fail_message="Failed Secure-DTI data sharing protocol")
     os.chdir(cwd)

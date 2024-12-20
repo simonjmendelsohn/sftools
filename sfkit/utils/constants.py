@@ -44,4 +44,3 @@ ENV = os.environ.copy()
 SFKIT_PROXY_PORT = os.environ.get("SFKIT_PROXY_PORT", "7080")
 if SFKIT_PROXY_ON:
     ENV["ALL_PROXY"] = "socks5://localhost:" + SFKIT_PROXY_PORT
-    ENV["PROXYCHAINS_CONF_FILE"] = f"{EXECUTABLES_PREFIX}proxychains.conf"
