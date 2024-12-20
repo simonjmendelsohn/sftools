@@ -22,7 +22,7 @@ def run_dti_protocol(role: str, demo: bool = False) -> None:
         # prepare_data(constants.ENCRYPTED_DATA_FOLDER, role)
         # copy_data_to_gwas_repo(constants.ENCRYPTED_DATA_FOLDER, role)
         sync_with_other_vms(role)
-    # start_datasharing(role, demo)
+    start_datasharing(role, demo)
     # start_gwas(role, demo)
 
 
@@ -65,10 +65,7 @@ def update_parameters(role: str) -> None:
             pars[f"PORT_P{i}_P{j}"] = {"value": ports.split(",")[j]}
 
     # update file paths
-    data_path = ''
-    if role != "0":
-        with open(os.path.join(constants.SFKIT_DIR, "data_path.txt"), "r") as f:
-            data_path = f.readline().rstrip()
+    data_path = _get_data_path(role)
     if not data_path:
         return
 
@@ -83,6 +80,13 @@ def update_parameters(role: str) -> None:
             line = f"{key} " + str(pars[key]["value"]) + "\n"
         print(line, end="")
 
+
+def _get_data_path(role: str) -> str:
+    data_path = ''
+    if role != "0":
+        with open(os.path.join(constants.SFKIT_DIR, "data_path.txt"), "r") as f:
+            data_path = f.readline().rstrip()
+    return data_path
 
 # def prepare_data(data_path: str, role: str) -> None:
 #     doc_ref_dict: dict = get_doc_ref_dict()
@@ -121,22 +125,19 @@ def sync_with_other_vms(role: str) -> None:
     print("Finished syncing up")
 
 
-# def start_datasharing(role: str, demo: bool) -> None:
-#     update_firestore("update_firestore::task=Performing data sharing protocol")
-#     print("\n\n starting data sharing protocol \n\n")
+def start_datasharing(role: str, demo: bool) -> None:
+    update_firestore("update_firestore::task=Performing data sharing protocol")
+    print("\n\n starting data sharing protocol \n\n")
 
-#     cwd = os.getcwd()
-#     os.chdir(f"{constants.EXECUTABLES_PREFIX}secure-gwas/code")
-#     if demo:
-#         command = ["bash", "run_example_datasharing.sh"]
-#     else:
-#         command = ["bin/DataSharingClient", role, f"../par/test.par.{role}.txt"]
-#         if role != "0":
-#             command.append("../test_data/")
-#     run_command(command, fail_message="Failed MPC-GWAS data sharing protocol")
-#     os.chdir(cwd)
+    cwd = os.getcwd()
+    os.chdir(f"{constants.EXECUTABLES_PREFIX}secure-dti/mpc/code")
+    command = ["bin/ShareData", role, f"../par/{'demo' if demo else 'test'}.par.{role}.txt"]
+    if role == "3":
+        command.append(_get_data_path(role))
+    run_command(command, fail_message="Failed Secure-DTI data sharing protocol")
+    os.chdir(cwd)
 
-#     print("\n\n Finished data sharing protocol\n\n")
+    print("\n\n Finished data sharing protocol\n\n")
 
 
 # def start_gwas(role: str, demo: bool) -> None:
