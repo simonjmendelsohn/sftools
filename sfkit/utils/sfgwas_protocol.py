@@ -206,7 +206,7 @@ def update_data_file_paths(data: dict) -> None:
     # don't need to return anything because data is a mutable object
 
 
-def update_config_global(protocol: str = "gwas") -> None:
+def update_config_global(protocol: str = "gwas", network_only: bool = False) -> None:
     """
     Update configGlobal.toml
     """
@@ -229,7 +229,7 @@ def update_config_global(protocol: str = "gwas") -> None:
             if port != "null" and i != j:
                 data.get("servers", {}).get(f"party{i}", {}).get("ports", {})[f"party{j}"] = port
 
-    if constants.BLOCKS_MODE not in doc_ref_dict["description"]:
+    if not network_only and constants.BLOCKS_MODE not in doc_ref_dict["description"]:
         data["num_main_parties"] = len(doc_ref_dict["participants"]) - 1
 
         row_name = "num_rows" if protocol == "pca" else "num_inds"

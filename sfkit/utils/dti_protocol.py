@@ -13,6 +13,7 @@ from sfkit.utils.helper_functions import (copy_results_to_cloud_storage,
                                           copy_to_out_folder, plot_assoc,
                                           postprocess_assoc, run_command)
 from sfkit.utils.sfgwas_helper_functions import boot_sfkit_proxy
+from sfkit.utils.sfgwas_protocol import update_config_global
 
 
 def run_dti_protocol(role: str, demo: bool = False) -> None:
@@ -23,6 +24,7 @@ def run_dti_protocol(role: str, demo: bool = False) -> None:
         # prepare_data(constants.ENCRYPTED_DATA_FOLDER, role)
         # copy_data_to_gwas_repo(constants.ENCRYPTED_DATA_FOLDER, role)
         sync_with_other_vms(role)
+        update_config_global(network_only=True)
     start_datasharing(role, demo)
     # start_gwas(role, demo)
 
