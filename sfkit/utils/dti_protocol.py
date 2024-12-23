@@ -67,6 +67,8 @@ def update_parameters(role: str) -> None:
         for j in range(i + 1, 4):
             pars[f"PORT_P{i}_P{j}"] = {"value": ports.split(",")[j]}
 
+    print("pars:", pars)
+
     # update file paths
     data_path = _get_data_path(role)
     if not data_path:
