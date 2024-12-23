@@ -195,7 +195,6 @@ jobs:
     - name: Delete old packages
       uses: actions/delete-package-versions@v5
       with:
-        owner: hcholab
         package-name: sfkit
         package-type: container
         delete-only-untagged-versions: true
