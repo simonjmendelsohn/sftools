@@ -199,4 +199,4 @@ jobs:
         package-name: sfkit
         package-type: container
         delete-only-untagged-versions: true
-        min-versions-to-keep: 0
+        min-versions-to-keep: 100
