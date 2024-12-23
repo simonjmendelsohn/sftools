@@ -217,14 +217,23 @@ def update_config_global(protocol: str = "gwas", network_only: bool = False) -> 
         data = tomlkit.parse(f.read())
 
     # Update the ip addresses and ports
+    if "servers" not in data:
+        data["servers"] = {}
+    servers = data["servers"]
     for i, participant in enumerate(doc_ref_dict["participants"]):
-        data.get("servers", {}).get(f"party{i}", {})["ipaddr"] = \
+        if f"party{i}" not in servers:
+            servers[f"party{i}"] = {}
+        party = servers[f"party{i}"]
+
+        party["ipaddr"] = \
             doc_ref_dict["personal_parameters"][participant]["IP_ADDRESS"]["value"]
 
         ports: list = doc_ref_dict["personal_parameters"][participant]["PORTS"]["value"].split(",")
+        if "ports" not in party:
+            party["ports"] = {}
         for j, port in enumerate(ports):
             if port != "null" and i != j:
-                data.get("servers", {}).get(f"party{i}", {}).get("ports", {})[f"party{j}"] = port
+                party["ports"][f"party{j}"] = port
 
     if not network_only and constants.BLOCKS_MODE not in doc_ref_dict["description"]:
         data["num_main_parties"] = len(doc_ref_dict["participants"]) - 1
