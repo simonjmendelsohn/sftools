@@ -228,9 +228,11 @@ def boot_sfkit_proxy(role: str, protocol: str = "gwas") -> None:
         "-socks",
         constants.ENV["ALL_PROXY"],
     ]
+    print_cmd = command.copy()
     if not auth_key.startswith("study_id:"):
         command.extend(["-auth-key", auth_key])
-    print(f"Running command: {command}")
+        print_cmd.extend(["-auth-key", "*" * len(auth_key)])
+    print(f"Running command: {print_cmd}")
     p = subprocess.Popen(command)
 
     # send SIGTERM on sfkit CLI exit
