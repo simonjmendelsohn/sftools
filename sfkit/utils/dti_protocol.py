@@ -138,8 +138,9 @@ def start_datasharing(role: str, demo: bool) -> None:
 
     cwd = os.getcwd()
     command = []
+    sfkit_proxy = None
     if constants.SFKIT_PROXY_ON:
-        boot_sfkit_proxy(role=role)
+        sfkit_proxy = boot_sfkit_proxy(role=role)
 
         proxychains_conf = os.path.join(cwd, "proxychains.conf")
         copy2("/etc/proxychains.conf", proxychains_conf)
@@ -158,6 +159,9 @@ def start_datasharing(role: str, demo: bool) -> None:
     run_command(command, fail_message="Failed Secure-DTI data sharing protocol")
     os.chdir(cwd)
 
+    if sfkit_proxy:
+        sfkit_proxy.terminate()
+
     print("\n\n Finished data sharing protocol\n\n")
 
 
@@ -171,6 +175,8 @@ def start_dti(role: str, demo: bool) -> None:
     cwd = os.getcwd()
     command = []
     if constants.SFKIT_PROXY_ON:
+        boot_sfkit_proxy(role=role)
+
         proxychains_conf = os.path.join(cwd, "proxychains.conf")
         command += ["proxychains", "-f", proxychains_conf]
 

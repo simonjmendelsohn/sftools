@@ -197,7 +197,7 @@ def to_float_int_or_bool(value) -> Union[float, int, bool, str]:
             return value
 
 
-def boot_sfkit_proxy(role: str, protocol: str = "gwas") -> None:
+def boot_sfkit_proxy(role: str, protocol: str = "gwas") -> subprocess.Popen:
     print("Booting up sfkit-proxy")
     doc_ref_dict: dict = get_doc_ref_dict()
     study_id: str = doc_ref_dict["study_id"]
@@ -244,3 +244,4 @@ def boot_sfkit_proxy(role: str, protocol: str = "gwas") -> None:
     sleep(1)
 
     print("sfkit-proxy is running")
+    return p
