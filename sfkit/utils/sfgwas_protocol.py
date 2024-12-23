@@ -218,9 +218,6 @@ def update_config_global(protocol: str = "gwas", network_only: bool = False) -> 
 
     # Update the ip addresses and ports
     for i, participant in enumerate(doc_ref_dict["participants"]):
-        if f"party{i}" not in data.get("servers", {}):
-            data.get("servers", {})[f"party{i}"] = copy.deepcopy(data.get("servers", {})[f"party{i-1}"])
-
         data.get("servers", {}).get(f"party{i}", {})["ipaddr"] = \
             doc_ref_dict["personal_parameters"][participant]["IP_ADDRESS"]["value"]
 
