@@ -156,7 +156,7 @@ def start_datasharing(role: str, demo: bool) -> None:
 
 
     os.chdir(f"{constants.EXECUTABLES_PREFIX}secure-dti/mpc/code")
-    run_command(command, fail_message="Failed Secure-DTI data sharing protocol")
+    run_command(command, fail_message="Failed Secure-DTI data sharing protocol", ignore_failure=role == "3")
     os.chdir(cwd)
 
     if sfkit_proxy:
