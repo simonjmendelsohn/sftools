@@ -221,8 +221,8 @@ def update_config_global(protocol: str = "gwas", network_only: bool = False) -> 
         if f"party{i}" not in data.get("servers", {}):
             data.get("servers", {})[f"party{i}"] = copy.deepcopy(data.get("servers", {})[f"party{i-1}"])
 
-        ip_addr = doc_ref_dict["personal_parameters"][participant]["IP_ADDRESS"]["value"]
-        data.get("servers", {}).get(f"party{i}", {})["ipaddr"] = "127.0.0.1" if constants.SFKIT_PROXY_ON else ip_addr
+        data.get("servers", {}).get(f"party{i}", {})["ipaddr"] = \
+            doc_ref_dict["personal_parameters"][participant]["IP_ADDRESS"]["value"]
 
         ports: list = doc_ref_dict["personal_parameters"][participant]["PORTS"]["value"].split(",")
         for j, port in enumerate(ports):
