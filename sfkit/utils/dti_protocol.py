@@ -26,6 +26,7 @@ def run_dti_protocol(role: str, demo: bool = False) -> None:
         sync_with_other_vms(role)
         update_config_global(network_only=True)
     start_datasharing(role, demo)
+    start_dti(role, demo)
     # start_gwas(role, demo)
 
 
@@ -127,6 +128,10 @@ def sync_with_other_vms(role: str) -> None:
     print("Finished syncing up")
 
 
+def _get_par_path(role: str, demo: bool) -> str:
+    return f"../par/{'demo' if demo else 'test'}.par.{role}.txt"
+
+
 def start_datasharing(role: str, demo: bool) -> None:
     update_firestore("update_firestore::task=Performing data sharing protocol")
     print("\n\n starting data sharing protocol \n\n")
@@ -144,7 +149,7 @@ def start_datasharing(role: str, demo: bool) -> None:
             print(line, end="")
         command += ["proxychains", "-f", proxychains_conf]
 
-    command += ["bin/ShareData", role, f"../par/{'demo' if demo else 'test'}.par.{role}.txt"]
+    command += ["bin/ShareData", role, _get_par_path(role, demo)]
     if role == "3":
         command.append(_get_data_path(role))
 
@@ -156,23 +161,27 @@ def start_datasharing(role: str, demo: bool) -> None:
     print("\n\n Finished data sharing protocol\n\n")
 
 
-# def start_gwas(role: str, demo: bool) -> None:
-#     update_firestore("update_firestore::task=Performing GWAS protocol")
-#     print("Sleeping before starting GWAS")
-#     time.sleep(100 + 30 * int(role))
-#     print("\n\n starting GWAS \n\n")
-#     update_firestore("update_firestore::status=starting GWAS")
+def start_dti(role: str, demo: bool) -> None:
+    update_firestore("update_firestore::task=Performing DTI protocol")
+    print("Sleeping before starting DTI")
+    time.sleep(100 + 30 * int(role))
+    print("\n\n starting DTI \n\n")
+    update_firestore("update_firestore::status=starting DTI")
 
-#     cwd = os.getcwd()
-#     os.chdir(f"{constants.EXECUTABLES_PREFIX}secure-gwas/code")
-#     if demo:
-#         command = ["bash", "run_example_gwas.sh"]
-#     else:
-#         command = ["bin/GwasClient", role, f"../par/test.par.{role}.txt"]
-#     run_command(command, fail_message="Failed MPC-GWAS protocol")
-#     os.chdir(cwd)
+    cwd = os.getcwd()
+    command = []
+    if constants.SFKIT_PROXY_ON:
+        proxychains_conf = os.path.join(cwd, "proxychains.conf")
+        command += ["proxychains", "-f", proxychains_conf]
 
-#     print("\n\n Finished GWAS \n\n")
+    command += ["bin/TrainSecureDTI", role, _get_par_path(role, demo)]
+
+    if int(role) < 3:
+        os.chdir(f"{constants.EXECUTABLES_PREFIX}secure-dti/mpc/code")
+        run_command(command, fail_message="Failed Secure-DTI protocol")
+    os.chdir(cwd)
+
+    print("\n\n Finished DTI \n\n")
 
 #     if role != "0":
 #         process_output_files(role, demo)
