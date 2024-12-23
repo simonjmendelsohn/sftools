@@ -64,7 +64,7 @@ def update_parameters(role: str) -> None:
         pars[f"IP_ADDR_P{i}"] = {"value": ip}
 
         ports = doc_ref_dict["personal_parameters"][doc_ref_dict["participants"][i]]["PORTS"]["value"]
-        for j in range(i + 1, 3):
+        for j in range(i + 1, 4):
             pars[f"PORT_P{i}_P{j}"] = {"value": ports.split(",")[j]}
 
     # update file paths
