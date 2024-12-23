@@ -67,8 +67,6 @@ def update_parameters(role: str) -> None:
         for j in range(i + 1, 4):
             pars[f"PORT_P{i}_P{j}"] = {"value": ports.split(",")[j]}
 
-    print("pars:", pars)
-
     # update file paths
     data_path = _get_data_path(role)
     if not data_path:
@@ -79,11 +77,24 @@ def update_parameters(role: str) -> None:
     pars["TRAIN_SUFFIXES"] = {"value": f"{data_path}/train_suffixes.txt"}
     pars["TEST_SUFFIXES"] = {"value": f"{data_path}/test_suffixes.txt"}
 
+    print("pars:")
+    for key, value in pars.items():
+        if key.startswith("PORT"):
+            print(f"{key}: {value['value']}")
+
+    print("par_file before modification:")
+    with open(par_file, "r") as file:
+        print(file.read())
+
     for line in fileinput.input(par_file, inplace=True):
         key = str(line).split(" ")[0]
         if key in pars:
             line = f"{key} " + str(pars[key]["value"]) + "\n"
         print(line, end="")
+
+    print("par_file after modification:")
+    with open(par_file, "r") as file:
+        print(file.read())
 
 
 def _get_data_path(role: str) -> str:
