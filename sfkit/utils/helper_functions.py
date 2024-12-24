@@ -19,7 +19,7 @@ def authenticate_user() -> None:
         exit(1)
 
 
-def run_command(command_list: list, fail_message: str = "", ignore_failure: bool = False) -> None:
+def run_command(command_list: list, fail_message: str = "") -> None:
     with subprocess.Popen(
         command_list,
         stdout=subprocess.PIPE,
@@ -38,7 +38,7 @@ def run_command(command_list: list, fail_message: str = "", ignore_failure: bool
     if res != 0:
         print(f"FAILED - {command_list}")
         print(f"Return code: {res}")
-        condition_or_fail(ignore_failure, fail_message)
+        condition_or_fail(False, fail_message)
 
 
 def condition_or_fail(condition: bool, message: str = "The sfkit process has failed.") -> None:

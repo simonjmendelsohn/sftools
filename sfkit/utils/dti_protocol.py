@@ -156,7 +156,7 @@ def start_datasharing(role: str, demo: bool) -> None:
 
 
     os.chdir(f"{constants.EXECUTABLES_PREFIX}secure-dti/mpc/code")
-    run_command(command, fail_message="Failed Secure-DTI data sharing protocol", ignore_failure=role == "3")
+    run_command(command, fail_message="Failed Secure-DTI data sharing protocol")
     os.chdir(cwd)
 
     if sfkit_proxy:
@@ -168,7 +168,7 @@ def start_datasharing(role: str, demo: bool) -> None:
 def start_dti(role: str, demo: bool) -> None:
     update_firestore("update_firestore::task=Performing DTI protocol")
     print("Sleeping before starting DTI")
-    time.sleep(100 + 30 * int(role))
+    time.sleep(5 * int(role))
     print("\n\n starting DTI \n\n")
     update_firestore("update_firestore::status=starting DTI")
 
