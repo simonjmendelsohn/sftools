@@ -23,9 +23,11 @@ def run_dti_protocol(role: str, demo: bool = False) -> None:
         ## connect_to_other_vms(role)
         # prepare_data(constants.ENCRYPTED_DATA_FOLDER, role)
         # copy_data_to_gwas_repo(constants.ENCRYPTED_DATA_FOLDER, role)
-        sync_with_other_vms(role)
+        sync_with_other_vms(role, "initial setup")
         update_config_global(network_only=True)
+    sync_with_other_vms(role, "global config")
     start_datasharing(role, demo)
+    sync_with_other_vms(role, "data sharing")
     start_dti(role, demo)
     # start_gwas(role, demo)
 
@@ -110,20 +112,19 @@ def _get_data_path(role: str) -> str:
 #     print("\n\n Finished copying data to GWAS repo \n\n")
 
 
-def sync_with_other_vms(role: str) -> None:
-    update_firestore("update_firestore::status=syncing up")
+def sync_with_other_vms(role: str, state: str) -> None:
+    update_firestore(f"update_firestore::status=syncing up {state}")
     update_firestore("update_firestore::task=Syncing up machines")
     print("Begin syncing up")
     # wait until all participants have the status of starting data sharing protocol
     while True:
         doc_ref_dict: dict = get_doc_ref_dict()
         statuses = doc_ref_dict["status"].values()
-        if all(status == "syncing up" for status in statuses):
+        if all(status == f"syncing up {state}" for status in statuses):
             break
-        print("Waiting for all participants to sync up...")
+        print(f"Waiting for all participants to sync up {state}...")
         time.sleep(5)
-    time.sleep(15 + 15 * int(role))
-    print("Finished syncing up")
+    print(f"Finished syncing up {state}")
 
 
 def _get_par_path(role: str, demo: bool) -> str:
@@ -165,8 +166,6 @@ def start_datasharing(role: str, demo: bool) -> None:
 
 def start_dti(role: str, demo: bool) -> None:
     update_firestore("update_firestore::task=Performing DTI protocol")
-    print("Sleeping before starting DTI")
-    time.sleep(30 + 30 * int(role))
     print("\n\n starting DTI \n\n")
     update_firestore("update_firestore::status=starting DTI")
 
