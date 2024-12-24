@@ -70,11 +70,10 @@ def update_parameters(role: str) -> None:
 
     # update file paths
     data_path = _get_data_path(role)
-    if data_path:
-        pars["FEATURES_FILE"] = {"value": f"{data_path}/X"}
-        pars["LABELS_FILE"] = {"value": f"{data_path}/y"}
-        pars["TRAIN_SUFFIXES"] = {"value": f"{data_path}/train_suffixes.txt"}
-        pars["TEST_SUFFIXES"] = {"value": f"{data_path}/test_suffixes.txt"}
+    pars["FEATURES_FILE"] = {"value": f"{data_path}/X"}
+    pars["LABELS_FILE"] = {"value": f"{data_path}/y"}
+    pars["TRAIN_SUFFIXES"] = {"value": f"{data_path}/train_suffixes.txt"}
+    pars["TEST_SUFFIXES"] = {"value": f"{data_path}/test_suffixes.txt"}
 
     # update par file
     for line in fileinput.input(par_file, inplace=True):
@@ -86,9 +85,8 @@ def update_parameters(role: str) -> None:
 
 def _get_data_path(role: str) -> str:
     data_path = ''
-    if role != "0":
-        with open(os.path.join(constants.SFKIT_DIR, "data_path.txt"), "r") as f:
-            data_path = f.readline().rstrip()
+    with open(os.path.join(constants.SFKIT_DIR, "data_path.txt"), "r") as f:
+        data_path = f.readline().rstrip()
     return data_path
 
 # def prepare_data(data_path: str, role: str) -> None:
