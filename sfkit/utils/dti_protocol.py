@@ -166,7 +166,7 @@ def start_datasharing(role: str, demo: bool) -> None:
 def start_dti(role: str, demo: bool) -> None:
     update_firestore("update_firestore::task=Performing DTI protocol")
     print("Sleeping before starting DTI")
-    time.sleep(5 * int(role))
+    time.sleep(30 + 30 * int(role))
     print("\n\n starting DTI \n\n")
     update_firestore("update_firestore::status=starting DTI")
 
