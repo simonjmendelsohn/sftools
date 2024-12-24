@@ -23,11 +23,10 @@ def run_dti_protocol(role: str, demo: bool = False) -> None:
         ## connect_to_other_vms(role)
         # prepare_data(constants.ENCRYPTED_DATA_FOLDER, role)
         # copy_data_to_gwas_repo(constants.ENCRYPTED_DATA_FOLDER, role)
-        sync_with_other_vms(role, "initial setup")
+        sync_with_other_vms(role)
         update_config_global(network_only=True)
-    sync_with_other_vms(role, "global config")
     start_datasharing(role, demo)
-    sync_with_other_vms(role, "data sharing")
+    sync_with_other_vms(role)
     start_dti(role, demo)
     # start_gwas(role, demo)
 
@@ -112,19 +111,19 @@ def _get_data_path(role: str) -> str:
 #     print("\n\n Finished copying data to GWAS repo \n\n")
 
 
-def sync_with_other_vms(role: str, state: str) -> None:
-    update_firestore(f"update_firestore::status=syncing up {state}")
+def sync_with_other_vms(role: str) -> None:
+    update_firestore("update_firestore::status=syncing up")
     update_firestore("update_firestore::task=Syncing up machines")
     print("Begin syncing up")
     # wait until all participants have the status of starting data sharing protocol
     while True:
         doc_ref_dict: dict = get_doc_ref_dict()
         statuses = doc_ref_dict["status"].values()
-        if all(status == f"syncing up {state}" for status in statuses):
+        if all(status == "syncing up" for status in statuses):
             break
-        print(f"Waiting for all participants to sync up {state}...")
+        print("Waiting for all participants to sync up...")
         time.sleep(5)
-    print(f"Finished syncing up {state}")
+    print("Finished syncing up")
 
 
 def _get_par_path(role: str, demo: bool) -> str:
