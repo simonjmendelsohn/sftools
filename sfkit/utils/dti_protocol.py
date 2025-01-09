@@ -71,10 +71,10 @@ def update_parameters(role: str) -> None:
 
     # update file paths
     data_path = _get_data_path(role)
-    pars["FEATURES_FILE"] = {"value": f"{data_path}/X"}
-    pars["LABELS_FILE"] = {"value": f"{data_path}/y"}
-    pars["TRAIN_SUFFIXES"] = {"value": f"{data_path}/train_suffixes.txt"}
-    pars["TEST_SUFFIXES"] = {"value": f"{data_path}/test_suffixes.txt"}
+    pars["FEATURES_FILE"] = {"value": os.path.join(data_path, "X")}
+    pars["LABELS_FILE"] = {"value": os.path.join(data_path, "y")}
+    pars["TRAIN_SUFFIXES"] = {"value": os.path.join(data_path, "train_suffixes.txt")}
+    pars["TEST_SUFFIXES"] = {"value": os.path.join(data_path, "test_suffixes.txt")}
 
     # update par file
     for line in fileinput.input(par_file, inplace=True):
@@ -150,7 +150,7 @@ def start_datasharing(role: str, demo: bool) -> None:
 
     command += ["bin/ShareData", role, _get_par_path(role, demo)]
     if role == "3":
-        command.append(_get_data_path(role))
+        command.append(os.path.join(_get_data_path(role), ""))
 
 
     os.chdir(f"{constants.EXECUTABLES_PREFIX}secure-dti/mpc/code")
