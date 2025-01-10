@@ -26,7 +26,6 @@ def run_dti_protocol(role: str, demo: bool = False) -> None:
         sync_with_other_vms(role)
         update_config_global(network_only=True)
     start_datasharing(role, demo)
-    sync_with_other_vms(role)
     start_dti(role, demo)
     # start_gwas(role, demo)
 
@@ -133,7 +132,6 @@ def _get_par_path(role: str, demo: bool) -> str:
 def start_datasharing(role: str, demo: bool) -> None:
     update_firestore("update_firestore::task=Performing data sharing protocol")
     print("\n\n starting data sharing protocol \n\n")
-    update_firestore("update_firestore::status=starting data sharing")
 
     cwd = os.getcwd()
     command = []
@@ -167,7 +165,6 @@ def start_datasharing(role: str, demo: bool) -> None:
 def start_dti(role: str, demo: bool) -> None:
     update_firestore("update_firestore::task=Performing DTI protocol")
     print("\n\n starting DTI \n\n")
-    update_firestore("update_firestore::status=starting DTI")
 
     cwd = os.getcwd()
     command = []
