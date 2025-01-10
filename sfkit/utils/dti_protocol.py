@@ -133,6 +133,7 @@ def _get_par_path(role: str, demo: bool) -> str:
 def start_datasharing(role: str, demo: bool) -> None:
     update_firestore("update_firestore::task=Performing data sharing protocol")
     print("\n\n starting data sharing protocol \n\n")
+    update_firestore("update_firestore::status=starting data sharing")
 
     cwd = os.getcwd()
     command = []
