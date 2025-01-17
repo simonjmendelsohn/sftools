@@ -1,17 +1,12 @@
 import fileinput
 import multiprocessing
 import os
-import shutil
 import time
 from shutil import copy2
 
-from google.cloud import storage
-
 from sfkit.api import get_doc_ref_dict, update_firestore, website_send_file
 from sfkit.utils import constants
-from sfkit.utils.helper_functions import (copy_results_to_cloud_storage,
-                                          copy_to_out_folder, plot_assoc,
-                                          postprocess_assoc, run_command)
+from sfkit.utils.helper_functions import run_command
 from sfkit.utils.sfgwas_helper_functions import boot_sfkit_proxy
 from sfkit.utils.sfgwas_protocol import update_config_global
 
@@ -20,14 +15,10 @@ def run_dti_protocol(role: str, demo: bool = False) -> None:
     print("\n\n Begin running Secure DTI protocol \n\n")
     if not demo:
         update_parameters(role)
-        ## connect_to_other_vms(role)
-        # prepare_data(constants.ENCRYPTED_DATA_FOLDER, role)
-        # copy_data_to_gwas_repo(constants.ENCRYPTED_DATA_FOLDER, role)
         sync_with_other_vms(role)
         update_config_global(network_only=True)
     start_datasharing(role, demo)
     start_dti(role, demo)
-    # start_gwas(role, demo)
 
 
 def update_parameters(role: str) -> None:
@@ -39,14 +30,6 @@ def update_parameters(role: str) -> None:
     # shared parameters and advanced parameters
     pars = {**doc_ref_dict["parameters"], **doc_ref_dict["advanced_parameters"]}
 
-    # individual parameters
-    # for i in range(1, len(doc_ref_dict["participants"])):
-    #     pars[f"NUM_INDS_SP_{i}"] = doc_ref_dict["personal_parameters"][doc_ref_dict["participants"][i]]["NUM_INDS"]
-
-    # pars["NUM_INDS"] = {"value": ""}
-    # pars["NUM_INDS"]["value"] = str(int(pars["NUM_INDS_SP_1"]["value"]) + int(pars["NUM_INDS_SP_2"]["value"]))
-
-    # num threads = num_cpus = $(nproc)
     num_cpus = str(multiprocessing.cpu_count())
     pars["NUM_THREADS"] = {"value": num_cpus}
     update_firestore(f"update_firestore::NUM_THREADS={num_cpus}")
@@ -54,17 +37,25 @@ def update_parameters(role: str) -> None:
 
     # update pars with ipaddresses and ports
     for i in range(len(doc_ref_dict["participants"])):
-        ip = doc_ref_dict["personal_parameters"][doc_ref_dict["participants"][i]]["IP_ADDRESS"]["value"]
+        ip = doc_ref_dict["personal_parameters"][doc_ref_dict["participants"][i]][
+            "IP_ADDRESS"
+        ]["value"]
         while ip == "":
-            print(f"IP address for {doc_ref_dict['participants'][i]} is empty. Waiting...")
+            print(
+                f"IP address for {doc_ref_dict['participants'][i]} is empty. Waiting..."
+            )
             time.sleep(5)
 
             doc_ref_dict = get_doc_ref_dict()
-            ip = doc_ref_dict["personal_parameters"][doc_ref_dict["participants"][i]]["IP_ADDRESS"]["value"]
+            ip = doc_ref_dict["personal_parameters"][doc_ref_dict["participants"][i]][
+                "IP_ADDRESS"
+            ]["value"]
 
         pars[f"IP_ADDR_P{i}"] = {"value": ip}
 
-        ports = doc_ref_dict["personal_parameters"][doc_ref_dict["participants"][i]]["PORTS"]["value"]
+        ports = doc_ref_dict["personal_parameters"][doc_ref_dict["participants"][i]][
+            "PORTS"
+        ]["value"]
         for j in range(i + 1, 4):
             pars[f"PORT_P{i}_P{j}"] = {"value": ports.split(",")[j]}
 
@@ -88,26 +79,6 @@ def _get_data_path(role: str) -> str:
     with open(os.path.join(constants.SFKIT_DIR, "data_path.txt"), "r") as f:
         data_path = f.readline().rstrip()
     return data_path
-
-# def prepare_data(data_path: str, role: str) -> None:
-#     doc_ref_dict: dict = get_doc_ref_dict()
-#     study_title: str = doc_ref_dict["title"]
-
-#     if role == "0":
-#         os.makedirs(data_path, exist_ok=True)
-#         storage.Client().bucket("sfkit").blob(f"{study_title}/pos.txt").download_to_filename(f"{data_path}/pos.txt")
-
-
-# def copy_data_to_gwas_repo(
-#     data_path: str, role: str
-# ) -> None:  # TODO: change the path in parameter file instead? Or move instead of copy?
-#     print("\n\n Copy data to GWAS repo \n\n")
-#     files_to_copy = ["g.bin", "m.bin", "p.bin", "other_shared_key.bin", "pos.txt"] if role != "0" else ["pos.txt"]
-#     for file_name in files_to_copy:
-#         src_file_path = os.path.join(data_path, file_name)
-#         dest_file_path = os.path.join("secure-gwas/test_data", file_name)
-#         copy2(src_file_path, dest_file_path)
-#     print("\n\n Finished copying data to GWAS repo \n\n")
 
 
 def sync_with_other_vms(role: str) -> None:
@@ -150,7 +121,6 @@ def start_datasharing(role: str, demo: bool) -> None:
     command += ["bin/ShareData", role, _get_par_path(role, demo)]
     if role == "3":
         command.append(os.path.join(_get_data_path(role), ""))
-
 
     os.chdir(f"{constants.EXECUTABLES_PREFIX}secure-dti/mpc/code")
     run_command(command, fail_message="Failed Secure-DTI data sharing protocol")
