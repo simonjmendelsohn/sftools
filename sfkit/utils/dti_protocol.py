@@ -186,50 +186,32 @@ def start_dti(role: str, demo: bool) -> None:
 
     print("\n\n Finished DTI \n\n")
 
-#     if role != "0":
-#         process_output_files(role, demo)
+    if role == "1":
+        process_output_files(role, demo)
 
-#     update_firestore("update_firestore::status=Finished protocol!")
+    update_firestore("update_firestore::status=Finished protocol!")
 
 
-# def process_output_files(role: str, demo: bool) -> None:
-#     # sourcery skip: assign-if-exp, introduce-default-else, swap-if-expression
-#     doc_ref_dict = get_doc_ref_dict()
-#     num_inds_total = 1_000
-#     if not demo:
-#         num_inds_total = sum(
-#             int(doc_ref_dict["personal_parameters"][user]["NUM_INDS"]["value"])
-#             for user in doc_ref_dict["participants"]
-#         )
-#     num_covs = int(doc_ref_dict["parameters"]["NUM_COVS"]["value"])
+def process_output_files(role: str, demo: bool) -> None:
+    cwd = os.getcwd()
+    os.chdir(f"{constants.EXECUTABLES_PREFIX}secure-dti")
+    evaluate_script = f"{constants.EXECUTABLES_PREFIX}secure-dti/bin/evaluate.py"
+    data_path = _get_data_path(role)
+    run_command(
+        ["python3", evaluate_script, data_path],
+        fail_message="Failed to evaluate DTI results",
+    )
+    os.chdir(cwd)
 
-#     postprocess_assoc(
-#         f"{constants.EXECUTABLES_PREFIX}secure-gwas/out/new_assoc.txt",
-#         f"{constants.EXECUTABLES_PREFIX}secure-gwas/out/test_assoc.txt",
-#         f"{constants.EXECUTABLES_PREFIX}secure-gwas/test_data/pos.txt",
-#         f"{constants.EXECUTABLES_PREFIX}secure-gwas/out/test_gkeep1.txt",
-#         f"{constants.EXECUTABLES_PREFIX}secure-gwas/out/test_gkeep2.txt",
-#         num_inds_total,
-#         num_covs,
-#     )
-#     plot_assoc(
-#         f"{constants.EXECUTABLES_PREFIX}secure-gwas/out/manhattan.png",
-#         f"{constants.EXECUTABLES_PREFIX}secure-gwas/out/new_assoc.txt",
-#     )
+    doc_ref_dict: dict = get_doc_ref_dict()
+    user_id: str = doc_ref_dict["participants"][int(role)]
 
-#     doc_ref_dict: dict = get_doc_ref_dict()
-#     user_id: str = doc_ref_dict["participants"][int(role)]
-
-#     relevant_paths = [f"{constants.EXECUTABLES_PREFIX}secure-gwas/out"]
-#     copy_to_out_folder(relevant_paths)
-
-#     if results_path := doc_ref_dict["personal_parameters"][user_id].get("RESULTS_PATH", {}).get("value", ""):
-#         copy_results_to_cloud_storage(role, results_path, f"{constants.EXECUTABLES_PREFIX}secure-gwas/out")
-
-#     send_results: str = doc_ref_dict["personal_parameters"][user_id].get("SEND_RESULTS", {}).get("value")
-#     if send_results == "Yes":
-#         with open(f"{constants.EXECUTABLES_PREFIX}secure-gwas/out/new_assoc.txt", "r") as file:
-#             website_send_file(file, "new_assoc.txt")
-
-#         with open(f"{constants.EXECUTABLES_PREFIX}secure-gwas/out/manhattan.png", "rb") as file:
-#             website_send_file(file, "manhattan.png")
+    send_results: str = (
+        doc_ref_dict["personal_parameters"][user_id]
+        .get("SEND_RESULTS", {})
+        .get("value")
+    )
+    if send_results == "Yes":
+        for data_type in ("train", "test"):
+            with open(f"{data_path}/roc_{data_type}.png", "r") as file:
+                website_send_file(file, f"roc_{data_type}.png")
